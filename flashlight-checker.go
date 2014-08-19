@@ -11,6 +11,10 @@ import (
 	"github.com/getlantern/flashlight/proxy"
 )
 
+const (
+	STATUS_GATEWAY_TIMEOUT = 504
+)
+
 func main() {
 	http.HandleFunc("/", handle)
 	port := os.Getenv("PORT")
@@ -49,7 +53,7 @@ func handle(resp http.ResponseWriter, req *http.Request) {
 
 	r, err := client.Head("http://www.google.com/humans.txt")
 	if err != nil {
-		resp.WriteHeader(500)
+		resp.WriteHeader(STATUS_GATEWAY_TIMEOUT)
 	} else {
 		defer r.Body.Close()
 		resp.WriteHeader(r.StatusCode)
