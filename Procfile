@@ -1,0 +1,1 @@
+web: flashlight-checker
