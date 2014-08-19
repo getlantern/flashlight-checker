@@ -2,12 +2,10 @@ package main
 
 import (
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/getlantern/enproxy"
 	"github.com/getlantern/flashlight/proxy"
 )
 
@@ -32,22 +30,11 @@ func handle(resp http.ResponseWriter, req *http.Request) {
 		InsecureSkipVerify: true,
 	}
 
-	log.Printf("UpstreamHost: %s", flashlightClient.UpstreamHost)
-	enproxyConfig := flashlightClient.BuildEnproxyConfig()
+	flashlightClient.BuildEnproxyConfig()
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			Dial: func(network string, addr string) (net.Conn, error) {
-				conn := &enproxy.Conn{
-					Addr:   addr,
-					Config: enproxyConfig,
-				}
-				err := conn.Connect()
-				if err != nil {
-					return nil, err
-				}
-				return conn, nil
-			},
+			Dial: flashlightClient.DialWithEnproxy,
 		},
 	}
 
